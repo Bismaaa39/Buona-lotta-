@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hmmmm????</title>
+  <link rel="icon" href="kucing.jpg" type="image/png">
+<style>
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #ffcccc, #ffe6e6);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #gameContainer {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .hidden { display: none; }
+  input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #ff6666;
+    color: white;
+    margin: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #ff3333;
+  }
+  #message {
+    margin-top: 20px;
+    font-style: italic;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+
+<div id="gameContainer">
+  <div id="startScreen">
+    <h1>Hmmmm????</h1>
+    <button onclick="startGame()">!!!!!!</button>
+  </div>
+  
+  <div id="questionScreen" class="hidden">
+    <div id="questionText"></div>
+    <div id="hintText" style="font-size: 14px; color: #777; margin-top: 5px;">
+      Jawab pake huruf kecil semua & ga dispasi ya!
+    </div>
+    <input type="text" id="answerInput" placeholder="La risposta di Pupu’K" />
+    <div>
+      <button onclick="goBack()">Balik</button>
+      <button onclick="nextQuestion()">Lanjut</button>
+    </div>
+    <div id="message"></div>
+  </div>
+  
+  <div id="endingScreen" class="hidden">
+    <h2 id="endingTitle"></h2>
+    <div id="endingText"></div>
+    <button onclick="location.reload()">Main Lagi</button>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      text: "Musisi",
+      validAnswers: ['sheilaon7', 'pamungkas', 'hindia', 'raissaanggiani', 'harumakigohan'], 
+      challenge: {
+        "sheilaon7": "Kalo ada waktu, kita nyanyi bareng ya!",
+        "pamungkas": "Cover lagu TO THE BONE dari Pupu'K titik.",
+        "hindia": "Kok bisa tau aku suka Hindia?",
+        "raissaanggiani": "y",
+        "harumakigohan": "ILYSM 3000>>>>>>>>>>>>> " 
+      }
+    },
+    {
+      text: "Giocattolo",
+      validAnswers: ['lego', 'mibia', 'hotwheels', 'bricks', 'gambar'],
+      challenge: {
+        "lego": "yang bener tuh lego, bukan bricks!",
+        "mibia": "beliin yang baru plwis",
+        "hotwheels": "adu sini sama ponakan kamu",
+        "bricks": "kw an ih",
+        "gambar": "gambar apa lagi y"
+      }
+    }
+  ];
+
+  let currentQuestion = 0;
+  let playerAnswers = [];
+
+  function startGame() {
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('questionScreen').classList.remove('hidden');
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const q = questions[currentQuestion];
+    document.getElementById('questionText').innerText = q.text;
+    document.getElementById('answerInput').value = '';
+    document.getElementById('message').innerText = '';
+  }
+
+  function nextQuestion() {
+    const input = document.getElementById('answerInput').value.trim().toLowerCase();
+    if (input === '') {
+      document.getElementById('message').innerText = "MAKSUDNYA APA GA NGISI?";
+      return;
+    }
+
+    const q = questions[currentQuestion];
+    if (!q.validAnswers.includes(input)) {
+      document.getElementById('message').innerText = "tetotttttt, cari jawaban lain y!"; // 
+      return;
+    }
+
+    playerAnswers[currentQuestion] = input;
+
+    if (currentQuestion === 0) {
+      if (q.challenge && q.challenge[input]) {
+        alert(q.challenge[input]);
+      }
+    }
+
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
+      showQuestion();
+    } else {
+      showEnding();
+    }
+  }
+
+  function goBack() {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      showQuestion();
+      document.getElementById('answerInput').value = playerAnswers[currentQuestion] || '';
+    } else {
+      document.getElementById('message').innerText = "PUPU'K, NGAPAIN BALIK LAGI?!!!!!";
+    }
+  }
+
+  function showEnding() {
+    document.getElementById('questionScreen').classList.add('hidden');
+    document.getElementById('endingScreen').classList.remove('hidden');
+
+    const jawaban1 = playerAnswers[0];
+    const jawaban2 = playerAnswers[1];
+    let endingTitle = ""; 
+    let endingText = ""; 
+
+    // =========================
+    // POLA ENDING
+    // =========================
+    if (jawaban1 === 'sheilaon7' && jawaban2 === 'lego') {
+      endingTitle = "Il finale di Pupu’K";
+      endingText = "Tapi kayanya sekarang Pupu'K lagi suka dewa y";
+    } else if (jawaban1 === 'sheilaon7' && jawaban2 === 'mibia') {
+      endingTitle = "Finale Sottomesso";
+      endingText = "Kasi tau lagunya, nanti kalo ada waktu aku cover";
+    } else if (jawaban1 === 'sheilaon7' && jawaban2 === 'hotwheels') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'sheilaon7' && jawaban2 === 'bricks') {
+      endingTitle = "Finale d’Inizio";
+      endingText = "Makasi dah ngenalin lagu SO7!:3";
+    } else if (jawaban1 === 'sheilaon7' && jawaban2 === 'gambar') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'pamungkas' && jawaban2 === 'lego') {
+      endingTitle = "Il finale di Binyu'k";
+      endingText = "Tebak lagu Pamungkas yang lagi aku dengerin, kalo bener aku teraktir bubur";
+    } else if (jawaban1 === 'pamungkas' && jawaban2 === 'mibia') {
+      endingTitle = "Finale Difficile";
+      endingText = "Tebak lagu Pamungkas yang paling susah part gitarnya, kalo bener aku teraktir mathca";
+    } else if (jawaban1 === 'pamungkas' && jawaban2 === 'hotwheels') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'pamungkas' && jawaban2 === 'bricks') {
+      endingTitle = "Finale Fantastico";
+      endingText = "Rakit bunganya sambil dengerin album Birdy dari Pam ya!";
+    } else if (jawaban1 === 'pamungkas' && jawaban2 === 'gambar') {
+      endingTitle = "Finale Dietro le Quinte";
+      endingText = "ENAK BANGT LAGU PAM";
+    } else if (jawaban1 === 'hindia' && jawaban2 === 'lego') {
+      endingTitle = "Il finale di Binyu'k";
+      endingText = "Tebak lagu Hindia yang lagi aku suka, kalo bener aku usahain minum obat tanpa pake sendok (G JANJI Y)";
+    } else if (jawaban1 === 'hindia' && jawaban2 === 'mibia') {
+      endingTitle = "Finale Soddisfacente";
+      endingText = "Kok Hindia enak juga y";
+    } else if (jawaban1 === 'hindia' && jawaban2 === 'hotwheels') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'hindia' && jawaban2 === 'bricks') {
+      endingTitle = "Finale Domanda";
+      endingText = "Kamu suka hindia kh?";
+    } else if (jawaban1 === 'hindia' && jawaban2 === 'gambar') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'raissaanggiani' && jawaban2 === 'lego') {
+      endingTitle = "Il finale di Binyu'k";
+      endingText = "dah ketebak lagunya apa.";
+    } else if (jawaban1 === 'raissaanggiani' && jawaban2 === 'mibia') {
+      endingTitle = "Finale Indefinito";
+      endingText = "Belum pernah nyoba, kalo mau kita nyanyi bareng y?";
+    } else if (jawaban1 === 'raissaanggiani' && jawaban2 === 'hotwheels') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'raissaanggiani' && jawaban2 === 'bricks') {
+      endingTitle = "Finale Domanda";
+      endingText = "Kamu suka raissa kh?";
+    } else if (jawaban1 === 'raissaanggiani' && jawaban2 === 'gambar') {
+      endingTitle = "Finale Confuso";
+      endingText = "Cari jawaban lain ah cape nentuin endingnya";
+    } else if (jawaban1 === 'harumakigohan' && jawaban2 === 'lego') {
+      endingTitle = "FINALE SEGRETO";
+      endingText = '<a href="secret_ending.html" style="font-size:24px;text-decoration:none;color:red;"><3</a>';
+    } else if (jawaban1 === 'harumakigohan' && jawaban2 === 'mibia') {
+      endingTitle = "FINALE SEGRETO";
+      endingText = '<a href="secret_ending.html" style="font-size:24px;text-decoration:none;color:red;"><3</a>';
+    } else if (jawaban1 === 'harumakigohan' && jawaban2 === 'hotwheels') {
+      endingTitle = "FINALE SEGRETO";
+      endingText = '<a href="secret_ending.html" style="font-size:24px;text-decoration:none;color:red;"><3</a>';
+    } else if (jawaban1 === 'harumakigohan' && jawaban2 === 'bricks') {
+      endingTitle = "FINALE SEGRETO";
+      endingText = '<a href="secret_ending.html" style="font-size:24px;text-decoration:none;color:red;"><3</a>';
+    } else if (jawaban1 === 'harumakigohan' && jawaban2 === 'gambar') {
+      endingTitle = "FINALE SEGRETO";
+      endingText = '<a href="secret_ending.html" style="font-size:24px;text-decoration:none;color:red;"><3</a>';
+    }
+    
+    document.getElementById('endingTitle').innerText = endingTitle;
+    document.getElementById('endingText').innerHTML = endingText;
+  }
+</script>
+
+</body>
+</html>
